@@ -47,7 +47,7 @@ import java.net.InetSocketAddress;
 
 @Service
 public class MqttServer {
-    private static Logger logger = LoggerFactory.getLogger(MqttServer.class);
+    private static final Logger logger = LoggerFactory.getLogger(MqttServer.class);
 
     private ServerBootstrap serverBootstrap = new ServerBootstrap();
     private ServerBootstrap wsServerBootstrap = new ServerBootstrap();
@@ -80,7 +80,7 @@ public class MqttServer {
             .channel(NioServerSocketChannel.class)
             .option(ChannelOption.SO_BACKLOG, 8 * 1024)
             .childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
-            .childOption(ChannelOption.WRITE_BUFFER_WATER_MARK,new WriteBufferWaterMark(connectConf.getLowWater(), connectConf.getHighWater()))
+            .childOption(ChannelOption.WRITE_BUFFER_WATER_MARK, new WriteBufferWaterMark(connectConf.getLowWater(), connectConf.getHighWater()))
             .childOption(ChannelOption.TCP_NODELAY, true)
             .localAddress(new InetSocketAddress(port))
             .childHandler(new ChannelInitializer<SocketChannel>() {

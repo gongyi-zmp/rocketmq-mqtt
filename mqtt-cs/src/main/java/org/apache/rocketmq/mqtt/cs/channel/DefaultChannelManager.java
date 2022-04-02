@@ -38,10 +38,10 @@ import java.util.concurrent.TimeUnit;
 
 @Component
 public class DefaultChannelManager implements ChannelManager {
-    private static Logger logger = LoggerFactory.getLogger(DefaultChannelManager.class);
-    private Map<String, Channel> channelMap = new ConcurrentHashMap<>(1024);
+    private static final Logger logger = LoggerFactory.getLogger(DefaultChannelManager.class);
+    private final Map<String, Channel> channelMap = new ConcurrentHashMap<>(1024);
     private HashedWheelTimer hashedWheelTimer;
-    private static int minBlankChannelSeconds = 10;
+    private static final int minBlankChannelSeconds = 10;
     private ScheduledThreadPoolExecutor scheduler;
 
     @Resource

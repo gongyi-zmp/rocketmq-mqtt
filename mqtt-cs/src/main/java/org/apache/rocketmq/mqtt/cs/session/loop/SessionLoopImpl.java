@@ -58,7 +58,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @Component
 public class SessionLoopImpl implements SessionLoop {
-    private static Logger logger = LoggerFactory.getLogger(SessionLoopImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(SessionLoopImpl.class);
 
     @Resource
     private PushAction pushAction;
@@ -97,8 +97,8 @@ public class SessionLoopImpl implements SessionLoop {
     private Map<String, PullEvent> pullEventMap = new ConcurrentHashMap<>(1024);
     private Map<String, Boolean> pullStatus = new ConcurrentHashMap<>(1024);
 
-    private AtomicLong rid = new AtomicLong();
-    private long pullIntervalMillis = 10;
+    private final AtomicLong rid = new AtomicLong();
+    private final long pullIntervalMillis = 10L;
 
     @PostConstruct
     public void init() {

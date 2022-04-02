@@ -48,7 +48,16 @@ import java.util.concurrent.TimeUnit;
 
 @Component
 public class MqttConnectHandler implements MqttPacketHandler<MqttConnectMessage> {
-    private static Logger logger = LoggerFactory.getLogger(MqttConnectHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(MqttConnectHandler.class);
+
+    private static final MqttConnAckMessage MQTT_CONNACK_SUCCESS_MESSAGE;
+    static {
+        MqttConnAckVariableHeader mqttConnAckVariableHeader =
+            new MqttConnAckVariableHeader(MqttConnectReturnCode.CONNECTION_ACCEPTED, false);
+        MqttFixedHeader mqttFixedHeader =
+            new MqttFixedHeader(MqttMessageType.CONNACK, false, MqttQoS.AT_MOST_ONCE, false, 0);
+        MQTT_CONNACK_SUCCESS_MESSAGE = new MqttConnAckMessage(mqttFixedHeader, mqttConnAckVariableHeader);
+    }
 
     @Resource
     private ChannelManager channelManager;
@@ -91,13 +100,12 @@ public class MqttConnectHandler implements MqttPacketHandler<MqttConnectMessage>
         }, 1, TimeUnit.SECONDS);
 
         try {
-            MqttConnAckMessage mqttConnAckMessage = getMqttConnAckMessage(MqttConnectReturnCode.CONNECTION_ACCEPTED);
             future.thenAccept(aVoid -> {
                 if (!channel.isActive()) {
                     return;
                 }
                 ChannelInfo.removeFuture(channel, ChannelInfo.FUTURE_CONNECT);
-                channel.writeAndFlush(mqttConnAckMessage);
+                channel.writeAndFlush(MQTT_CONNACK_SUCCESS_MESSAGE);
             });
             sessionLoop.loadSession(ChannelInfo.getClientId(channel), channel);
         } catch (Exception e) {

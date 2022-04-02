@@ -56,7 +56,7 @@ import java.util.concurrent.CompletableFuture;
 @ChannelHandler.Sharable
 @Component
 public class MqttPacketDispatcher extends SimpleChannelInboundHandler<MqttMessage> {
-    private static Logger logger = LoggerFactory.getLogger(MqttPacketDispatcher.class);
+    private static final Logger logger = LoggerFactory.getLogger(MqttPacketDispatcher.class);
 
     @Resource
     private MqttConnectHandler mqttConnectHandler;

@@ -32,7 +32,7 @@ import java.util.List;
 @ChannelHandler.Sharable
 @Component
 public class ConnectHandler extends ChannelInboundHandlerAdapter {
-    private static Logger logger = LoggerFactory.getLogger(ConnectHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(ConnectHandler.class);
 
     @Resource
     private ChannelManager channelManager;
