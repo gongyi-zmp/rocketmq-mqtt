@@ -17,7 +17,6 @@
 
 package org.apache.rocketmq.mqtt.cs.protocol.mqtt.handler;
 
-
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.mqtt.MqttFixedHeader;
@@ -53,12 +52,9 @@ import static io.netty.handler.codec.mqtt.MqttMessageIdVariableHeader.from;
 import static io.netty.handler.codec.mqtt.MqttMessageType.SUBACK;
 import static io.netty.handler.codec.mqtt.MqttQoS.AT_MOST_ONCE;
 
-
-
 @Component
 public class MqttSubscribeHandler implements MqttPacketHandler<MqttSubscribeMessage> {
-    private static Logger logger = LoggerFactory.getLogger(MqttSubscribeHandler.class);
-
+    private static final Logger logger = LoggerFactory.getLogger(MqttSubscribeHandler.class);
 
     @Resource
     private SessionLoop sessionLoop;
@@ -69,7 +65,8 @@ public class MqttSubscribeHandler implements MqttPacketHandler<MqttSubscribeMess
     @Resource
     private ConnectConf connectConf;
 
-    private ScheduledThreadPoolExecutor scheduler = new ScheduledThreadPoolExecutor(1, new ThreadFactoryImpl("check_subscribe_future"));
+    private final ScheduledThreadPoolExecutor scheduler = new ScheduledThreadPoolExecutor(
+        1, new ThreadFactoryImpl("check_subscribe_future"));
 
     @Override
     public void doHandler(ChannelHandlerContext ctx, MqttSubscribeMessage mqttMessage, HookResult upstreamHookResult) {
@@ -112,7 +109,6 @@ public class MqttSubscribeHandler implements MqttPacketHandler<MqttSubscribeMess
             channelManager.closeConnect(channel, ChannelCloseFrom.SERVER, "SubscribeException");
         }
     }
-
 
     private MqttSubAckMessage getResponse(MqttSubscribeMessage mqttSubscribeMessage) {
         MqttSubscribePayload payload = mqttSubscribeMessage.payload();

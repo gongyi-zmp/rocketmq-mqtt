@@ -20,7 +20,6 @@ package org.apache.rocketmq.mqtt.common.model;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rocketmq.mqtt.common.util.TopicUtils;
 
-
 public class Queue {
     protected long queueId;
     protected String queueName;

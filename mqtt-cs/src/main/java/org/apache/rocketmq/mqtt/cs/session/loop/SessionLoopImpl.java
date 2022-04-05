@@ -55,7 +55,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-
 @Component
 public class SessionLoopImpl implements SessionLoop {
     private static final Logger logger = LoggerFactory.getLogger(SessionLoopImpl.class);

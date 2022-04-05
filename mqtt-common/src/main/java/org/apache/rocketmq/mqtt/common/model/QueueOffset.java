@@ -19,7 +19,6 @@ package org.apache.rocketmq.mqtt.common.model;
 
 import java.util.Objects;
 
-
 public class QueueOffset {
     private volatile long offset = Long.MAX_VALUE;
     private volatile byte initializingStatus = -1;

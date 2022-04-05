@@ -46,7 +46,7 @@ import java.util.concurrent.TimeUnit;
 
 @Component
 public class FirstTopicManager {
-    private static Logger logger = LoggerFactory.getLogger(FirstTopicManager.class);
+    private static final Logger logger = LoggerFactory.getLogger(FirstTopicManager.class);
     private Cache<String, TopicRouteData> topicExistCache;
     private Cache<String, Object> topicNotExistCache;
     private DefaultMQAdminExt defaultMQAdminExt;

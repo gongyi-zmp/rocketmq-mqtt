@@ -17,7 +17,6 @@
 
 package org.apache.rocketmq.mqtt.cs.protocol.mqtt.handler;
 
-
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.mqtt.MqttConnAckMessage;
@@ -68,7 +67,8 @@ public class MqttConnectHandler implements MqttPacketHandler<MqttConnectMessage>
     @Resource
     private ConnectConf connectConf;
 
-    private ScheduledThreadPoolExecutor scheduler = new ScheduledThreadPoolExecutor(1, new ThreadFactoryImpl("check_connect_future"));
+    private final ScheduledThreadPoolExecutor scheduler = new ScheduledThreadPoolExecutor(
+        1, new ThreadFactoryImpl("check_connect_future"));
 
     @Override
     public void doHandler(ChannelHandlerContext ctx, MqttConnectMessage connectMessage, HookResult upstreamHookResult) {

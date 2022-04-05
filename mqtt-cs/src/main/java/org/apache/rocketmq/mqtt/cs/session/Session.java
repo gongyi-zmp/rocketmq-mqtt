@@ -17,7 +17,6 @@
 
 package org.apache.rocketmq.mqtt.cs.session;
 
-
 import io.netty.channel.Channel;
 import org.apache.rocketmq.mqtt.common.model.Message;
 import org.apache.rocketmq.mqtt.common.model.Queue;
@@ -41,7 +40,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Session {
-    private static Logger logger = LoggerFactory.getLogger(Session.class);
+    private static final Logger logger = LoggerFactory.getLogger(Session.class);
     private final long startTime = System.currentTimeMillis();
     private Channel channel;
     private volatile boolean destroyed = false;
