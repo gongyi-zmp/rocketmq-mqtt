@@ -293,16 +293,24 @@ public class Session {
             return false;
         }
         boolean add = false;
-        QueueOffset queueOffset;
-        queueOffset = queueOffsetMap.get(queue);
+        Map<Queue, LinkedHashSet<Message>> queueSendingMsgs = sendingMessages.get(subscription);
+        if (queueSendingMsgs == null || queueSendingMsgs.isEmpty()) {
+            return add;
+        }
+        LinkedHashSet<Message> pendMessages = queueSendingMsgs.get(queue);
+        if (pendMessages == null) {
+            return add;
+        }
+
+        QueueOffset queueOffset = queueOffsetMap.get(queue);
         Iterator<Message> iterator = messages.iterator();
         while (iterator.hasNext()) {
             Message message = iterator.next();
             if (message.getOffset() < queueOffset.getOffset() && queueOffset.getOffset() != Long.MAX_VALUE) {
                 continue;
             }
-            synchronized (this) {
-                if (sendingMessages.get(subscription).get(queue).add(message.copy())) {
+            synchronized (pendMessages) {
+                if (pendMessages.add(message.copy())) {
                     add = true;
                 }
             }
@@ -327,7 +335,7 @@ public class Session {
         }
         Message message;
         Message nextMessage = null;
-        synchronized (this) {
+        synchronized (messages) {
             if (messages.isEmpty()) {
                 return null;
             }
@@ -360,7 +368,7 @@ public class Session {
         if (messages == null) {
             return true;
         }
-        synchronized (this) {
+        synchronized (messages) {
             return messages.size() <= 0;
         }
     }
@@ -372,17 +380,19 @@ public class Session {
         if (queue == null) {
             throw new RuntimeException("queue is null");
         }
-        Map<Queue, LinkedHashSet<Message>> tmp = sendingMessages.get(subscription);
-        if (tmp != null && !tmp.isEmpty()) {
-            LinkedHashSet<Message> messages = tmp.get(queue);
-            if (messages == null) {
-                return null;
-            }
-            synchronized (this) {
-                return messages.isEmpty() ? null : messages.iterator().next();
-            }
+
+        Map<Queue, LinkedHashSet<Message>> queueSendingMsgs = sendingMessages.get(subscription);
+        if (queueSendingMsgs == null || queueSendingMsgs.isEmpty()) {
+            return null;
         }
-        return null;
+        LinkedHashSet<Message> messages = queueSendingMsgs.get(queue);
+        if (messages == null) {
+            return null;
+        }
+
+        synchronized (messages) {
+            return messages.isEmpty() ? null : messages.iterator().next();
+        }
     }
 
     public List<Message> pendMessageList(Subscription subscription, Queue queue) {
@@ -392,19 +402,21 @@ public class Session {
         if (queue == null) {
             throw new RuntimeException("queue is null");
         }
-        List<Message> list = new ArrayList<>();
-        Map<Queue, LinkedHashSet<Message>> tmp = sendingMessages.get(subscription);
-        if (tmp != null && !tmp.isEmpty()) {
-            LinkedHashSet<Message> messages = tmp.get(queue);
-            if (messages == null) {
-                return null;
-            }
-            synchronized (this) {
-                if (!messages.isEmpty()) {
-                    for (Message message : messages) {
-                        if (message.getAck() == -1) {
-                            list.add(message);
-                        }
+        List<Message> list = new ArrayList(32);
+        Map<Queue, LinkedHashSet<Message>> queueSendingMsgs = sendingMessages.get(subscription);
+        if (queueSendingMsgs == null || queueSendingMsgs.isEmpty()) {
+            return list;
+        }
+        LinkedHashSet<Message> messages = queueSendingMsgs.get(queue);
+        if (messages == null) {
+            return null;
+        }
+
+        synchronized (messages) {
+            if (!messages.isEmpty()) {
+                for (Message message : messages) {
+                    if (message.getAck() == -1) {
+                        list.add(message);
                     }
                 }
             }
@@ -427,7 +439,7 @@ public class Session {
         if (messages == null) {
             return;
         }
-        synchronized (this) {
+        synchronized (messages) {
             if (messages.isEmpty()) {
                 return;
             }
