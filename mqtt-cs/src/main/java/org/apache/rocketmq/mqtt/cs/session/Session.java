@@ -292,6 +292,8 @@ public class Session {
             logger.warn("not found queueOffset,{},{},{}", getClientId(), subscription, queue);
             return false;
         }
+        QueueOffset queueOffset = queueOffsetMap.get(queue);
+
         boolean add = false;
         Map<Queue, LinkedHashSet<Message>> queueSendingMsgs = sendingMessages.get(subscription);
         if (queueSendingMsgs == null || queueSendingMsgs.isEmpty()) {
@@ -302,7 +304,6 @@ public class Session {
             return add;
         }
 
-        QueueOffset queueOffset = queueOffsetMap.get(queue);
         Iterator<Message> iterator = messages.iterator();
         while (iterator.hasNext()) {
             Message message = iterator.next();
@@ -466,8 +467,7 @@ public class Session {
         String queueName = subscription.toQueueName();
         Map<Queue, QueueOffset> queueOffsetMap = offsetMap.get(queueName);
         if (queueOffsetMap == null || !queueOffsetMap.containsKey(queue)) {
-            logger.warn("failed update queue offset,not found queueOffset,{},{},{}", getClientId(), subscription,
-                    queue);
+            logger.warn("failed update queue offset,not found queueOffset,{},{},{}", getClientId(), subscription, queue);
             return;
         }
         QueueOffset queueOffset = queueOffsetMap.get(queue);

@@ -17,7 +17,6 @@
 
 package org.apache.rocketmq.mqtt.cs.session.loop;
 
-
 import io.netty.channel.Channel;
 import org.apache.rocketmq.mqtt.common.model.Queue;
 import org.apache.rocketmq.mqtt.common.model.Subscription;
@@ -26,7 +25,6 @@ import org.apache.rocketmq.mqtt.cs.session.Session;
 
 import java.util.List;
 import java.util.Set;
-
 
 public interface SessionLoop {
 

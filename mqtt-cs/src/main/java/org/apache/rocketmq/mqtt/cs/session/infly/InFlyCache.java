@@ -17,7 +17,6 @@
 
 package org.apache.rocketmq.mqtt.cs.session.infly;
 
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rocketmq.mqtt.common.model.Message;
 import org.apache.rocketmq.mqtt.common.model.Queue;
@@ -30,7 +29,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-
 
 @Component
 public class InFlyCache {
@@ -67,7 +65,7 @@ public class InFlyCache {
             return;
         }
         synchronized (idCache) {
-            cache.get(channelId).add(mqttMsgId);
+            idCache.add(mqttMsgId);
         }
     }
 
@@ -103,8 +101,7 @@ public class InFlyCache {
     public class PendingDownCache {
         private ConcurrentMap<String, Map<Integer, PendingDown>> cache = new ConcurrentHashMap<>(128);
 
-        public PendingDown put(String channelId, int mqttMsgId, Subscription subscription, Queue queue,
-                               Message message) {
+        public PendingDown put(String channelId, int mqttMsgId, Subscription subscription, Queue queue, Message message) {
             PendingDown pendingDown = new PendingDown();
             pendingDown.setSubscription(subscription);
             pendingDown.setQueue(queue);

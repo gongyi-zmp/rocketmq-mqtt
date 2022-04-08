@@ -43,7 +43,7 @@ import javax.annotation.Resource;
 
 @Component
 public class MqttPublishHandler implements MqttPacketHandler<MqttPublishMessage> {
-    private static Logger logger = LoggerFactory.getLogger(MqttPublishHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(MqttPublishHandler.class);
 
     @Resource
     private InFlyCache inFlyCache;
@@ -56,7 +56,6 @@ public class MqttPublishHandler implements MqttPacketHandler<MqttPublishMessage>
 
     @Resource
     private ConnectConf connectConf;
-
 
     @Override
     public void doHandler(ChannelHandlerContext ctx,
@@ -73,14 +72,14 @@ public class MqttPublishHandler implements MqttPacketHandler<MqttPublishMessage>
 
         final boolean isQos2Message = isQos2Message(mqttMessage);
         if (isQos2Message) {
-            if (inFlyCache.contains(InFlyCache.CacheType.PUB, channelId, variableHeader.messageId())) {
+            if (inFlyCache.contains(InFlyCache.CacheType.PUB, channelId, variableHeader.packetId())) {
                 doResponse(ctx, mqttMessage);
                 return;
             }
         }
         doResponse(ctx, mqttMessage);
         if (isQos2Message) {
-            inFlyCache.put(InFlyCache.CacheType.PUB, channelId, variableHeader.messageId());
+            inFlyCache.put(InFlyCache.CacheType.PUB, channelId, variableHeader.packetId());
         }
     }
 
@@ -95,22 +94,20 @@ public class MqttPublishHandler implements MqttPacketHandler<MqttPublishMessage>
             case AT_MOST_ONCE:
                 break;
             case AT_LEAST_ONCE:
-                MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.PUBACK, false,
-                    MqttQoS.AT_MOST_ONCE,
-                    false, 0);
+                MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(
+                    MqttMessageType.PUBACK, false, MqttQoS.AT_MOST_ONCE, false, 0);
                 MqttMessageIdVariableHeader mqttMessageIdVariableHeader = MqttMessageIdVariableHeader
-                    .from(variableHeader.messageId());
-                MqttPubAckMessage pubackMessage = new MqttPubAckMessage(mqttFixedHeader, mqttMessageIdVariableHeader);
-                ctx.channel().writeAndFlush(pubackMessage);
+                    .from(variableHeader.packetId());
+                MqttPubAckMessage pubAckMessage = new MqttPubAckMessage(mqttFixedHeader, mqttMessageIdVariableHeader);
+                ctx.channel().writeAndFlush(pubAckMessage);
                 break;
             case EXACTLY_ONCE:
-                MqttFixedHeader pubrecMqttHeader = new MqttFixedHeader(MqttMessageType.PUBREC, false,
-                    MqttQoS.AT_MOST_ONCE,
-                    false, 0);
-                MqttMessageIdVariableHeader pubrecMessageIdVariableHeader = MqttMessageIdVariableHeader
-                    .from(variableHeader.messageId());
-                MqttMessage pubrecMqttMessage = new MqttMessage(pubrecMqttHeader, pubrecMessageIdVariableHeader);
-                ctx.channel().writeAndFlush(pubrecMqttMessage);
+                MqttFixedHeader pubRecMqttHeader = new MqttFixedHeader(
+                    MqttMessageType.PUBREC, false, MqttQoS.AT_MOST_ONCE, false, 0);
+                MqttMessageIdVariableHeader pubRecMessageIdVariableHeader = MqttMessageIdVariableHeader
+                    .from(variableHeader.packetId());
+                MqttMessage pubRecMqttMessage = new MqttMessage(pubRecMqttHeader, pubRecMessageIdVariableHeader);
+                ctx.channel().writeAndFlush(pubRecMqttMessage);
                 break;
             default:
                 throw new IllegalArgumentException("unknown qos:" + fixedHeader.qosLevel());

@@ -39,7 +39,7 @@ import java.util.concurrent.TimeUnit;
 
 @Component
 public class WildcardManager {
-    private static Logger logger = LoggerFactory.getLogger(WildcardManager.class);
+    private static final Logger logger = LoggerFactory.getLogger(WildcardManager.class);
     private Map<String, Trie<String, Integer>> wildCardTrie = new ConcurrentHashMap<>();
     private ScheduledThreadPoolExecutor scheduler;
 
@@ -86,18 +86,22 @@ public class WildcardManager {
     }
 
     public Set<String> matchQueueSetByMsgTopic(String pubTopic, String namespace) {
+        MqttTopic mqttTopic = TopicUtils.decode(pubTopic);
+        return matchQueueSetByMsgTopic(pubTopic, mqttTopic, namespace);
+    }
+
+    public Set<String> matchQueueSetByMsgTopic(String pubTopic, MqttTopic mqttTopic, String namespace) {
         Set<String> queueNames = new HashSet<>();
         if (StringUtils.isBlank(pubTopic)) {
             return queueNames;
         }
-        MqttTopic mqttTopic = TopicUtils.decode(pubTopic);
         String secondTopic = TopicUtils.normalizeSecondTopic(mqttTopic.getSecondTopic());
         if (TopicUtils.isP2P(secondTopic)) {
             String p2Peer = TopicUtils.getP2Peer(mqttTopic, namespace);
             queueNames.add(TopicUtils.getP2pTopic(p2Peer));
         } else {
             queueNames.add(pubTopic);
-            Set<String> wildcards = matchWildcards(pubTopic);
+            Set<String> wildcards = matchWildcards(pubTopic, mqttTopic);
             if (wildcards != null && !wildcards.isEmpty()) {
                 queueNames.addAll(wildcards);
             }
@@ -105,10 +109,9 @@ public class WildcardManager {
         return queueNames;
     }
 
-    private Set<String> matchWildcards(String topic) {
+    private Set<String> matchWildcards(String topic, MqttTopic mqttTopic) {
         long start = System.currentTimeMillis();
         try {
-            MqttTopic mqttTopic = TopicUtils.decode(topic);
             Trie<String, Integer> trie = wildCardTrie.get(mqttTopic.getFirstTopic());
             if (trie == null) {
                 return new HashSet<>();

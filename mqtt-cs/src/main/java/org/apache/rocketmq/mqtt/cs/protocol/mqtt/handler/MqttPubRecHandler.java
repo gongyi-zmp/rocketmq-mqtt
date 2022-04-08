@@ -17,7 +17,6 @@
 
 package org.apache.rocketmq.mqtt.cs.protocol.mqtt.handler;
 
-
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.mqtt.MqttFixedHeader;
 import io.netty.handler.codec.mqtt.MqttMessage;
@@ -33,7 +32,6 @@ import org.apache.rocketmq.mqtt.cs.session.loop.SessionLoop;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-
 
 @Component
 public class MqttPubRecHandler implements MqttPacketHandler<MqttMessage> {
@@ -54,8 +52,8 @@ public class MqttPubRecHandler implements MqttPacketHandler<MqttMessage> {
         retryDriver.unMountPublish(variableHeader.messageId(), channelId);
         retryDriver.mountPubRel(variableHeader.messageId(), channelId);
 
-        MqttFixedHeader pubRelMqttFixedHeader = new MqttFixedHeader(MqttMessageType.PUBREL, false,
-                MqttQoS.AT_LEAST_ONCE, false, 0);
+        MqttFixedHeader pubRelMqttFixedHeader = new MqttFixedHeader(
+            MqttMessageType.PUBREL, false, MqttQoS.AT_LEAST_ONCE, false, 0);
         MqttMessage pubRelMqttMessage = new MqttMessage(pubRelMqttFixedHeader, variableHeader);
         ctx.channel().writeAndFlush(pubRelMqttMessage);
     }

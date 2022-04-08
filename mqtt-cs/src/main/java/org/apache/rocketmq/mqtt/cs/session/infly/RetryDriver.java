@@ -53,10 +53,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-
 @Component
 public class RetryDriver {
-    private static Logger logger = LoggerFactory.getLogger(RetryDriver.class);
+    private static final Logger logger = LoggerFactory.getLogger(RetryDriver.class);
 
     @Resource
     private InFlyCache inFlyCache;
@@ -85,8 +84,8 @@ public class RetryDriver {
     private Cache<String, RetryMessage> retryCache;
     private static final int MAX_CACHE = 50000;
     private Map<String, Map<Integer, RetryMessage>> sessionNoWaitRetryMsgMap = new ConcurrentHashMap<>(16);
-    private ScheduledThreadPoolExecutor scheduler = new ScheduledThreadPoolExecutor(2,
-            new ThreadFactoryImpl("retry_msg_thread_"));
+    private ScheduledThreadPoolExecutor scheduler = new ScheduledThreadPoolExecutor(
+        2, new ThreadFactoryImpl("retry_msg_thread_"));
 
     @PostConstruct
     public void init() {
@@ -199,10 +198,9 @@ public class RetryDriver {
                             pushAction.rollNextByAck(session, mqttMsgId);
                             continue;
                         }
-                        MqttFixedHeader pubRelMqttFixedHeader = new MqttFixedHeader(MqttMessageType.PUBREL, false,
-                                MqttQoS.valueOf(retryMessage.qos), false, 0);
-                        MqttMessage pubRelMqttMessage = new MqttMessage(pubRelMqttFixedHeader,
-                                MqttMessageIdVariableHeader.from(mqttMsgId));
+                        MqttFixedHeader pubRelMqttFixedHeader = new MqttFixedHeader(
+                            MqttMessageType.PUBREL, false, MqttQoS.valueOf(retryMessage.qos), false, 0);
+                        MqttMessage pubRelMqttMessage = new MqttMessage(pubRelMqttFixedHeader, MqttMessageIdVariableHeader.from(mqttMsgId));
                         session.getChannel().writeAndFlush(pubRelMqttMessage);
                         retryMessage.localRetryTime++;
                         retryMessage.timestamp = System.currentTimeMillis();
@@ -257,8 +255,8 @@ public class RetryDriver {
         if (session == null) {
             return;
         }
-        RetryMessage retryMessage = new RetryMessage(session, null, MqttQoS.AT_LEAST_ONCE.value(), mqttMsgId,
-                MqttMessageType.PUBREL, null);
+        RetryMessage retryMessage = new RetryMessage(
+            session, null, MqttQoS.AT_LEAST_ONCE.value(), mqttMsgId, MqttMessageType.PUBREL, null);
         retryCache.put(buildKey(mqttMsgId, channelId), retryMessage);
     }
 

@@ -36,8 +36,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import static java.math.BigDecimal.ROUND_HALF_UP;
 
 public class StatUtil {
-    private static Logger sysLogger = LoggerFactory.getLogger(StatUtil.class);
-    private static Logger logger = LoggerFactory.getLogger("StatLogger");
+    private static final Logger sysLogger = LoggerFactory.getLogger(StatUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger("StatLogger");
     private static final int MAX_KEY_NUM = Integer.parseInt(System.getProperty("stat.util.key.max.num", "10000"));
     private static volatile ConcurrentMap<String, Invoke> invokeCache = new ConcurrentHashMap<>(64);
     private static volatile ConcurrentMap<String, Map<Long, SecondInvoke>> secondInvokeCache = new ConcurrentHashMap<>(

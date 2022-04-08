@@ -17,7 +17,6 @@
 
 package org.apache.rocketmq.mqtt.cs.protocol.mqtt.handler;
 
-
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.mqtt.MqttPubAckMessage;
 import org.apache.rocketmq.mqtt.common.hook.HookResult;
@@ -32,11 +31,9 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
-
-
 @Component
 public class MqttPubAckHandler implements MqttPacketHandler<MqttPubAckMessage> {
-    private static Logger logger = LoggerFactory.getLogger(MqttPubAckHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(MqttPubAckHandler.class);
 
     @Resource
     private PushAction pushAction;

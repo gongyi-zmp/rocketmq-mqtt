@@ -36,10 +36,9 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import java.util.List;
 
-
 @Component
 public class PushAction {
-    private static Logger logger = LoggerFactory.getLogger(PushAction.class);
+    private static final Logger logger = LoggerFactory.getLogger(PushAction.class);
 
     @Resource
     private MqttMsgId mqttMsgId;
@@ -52,7 +51,6 @@ public class PushAction {
 
     @Resource
     private ConnectConf connectConf;
-
 
     public void messageArrive(Session session, Subscription subscription, Queue queue) {
         if (session == null) {

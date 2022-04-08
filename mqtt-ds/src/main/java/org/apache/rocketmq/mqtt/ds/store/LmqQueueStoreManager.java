@@ -73,7 +73,7 @@ import java.util.stream.Collectors;
 
 @Component
 public class LmqQueueStoreManager implements LmqQueueStore {
-    private static Logger logger = LoggerFactory.getLogger(LmqQueueStoreManager.class);
+    private static final Logger logger = LoggerFactory.getLogger(LmqQueueStoreManager.class);
     private PullAPIWrapper pullAPIWrapper;
     private DefaultMQPullConsumer defaultMQPullConsumer;
     private DefaultMQProducer defaultMQProducer;
@@ -278,7 +278,6 @@ public class LmqQueueStoreManager implements LmqQueueStore {
     public String getClientP2pTopic() {
         return serviceConf.getClientP2pTopic();
     }
-
 
     private StoreResult toStoreResult(SendResult sendResult) {
         StoreResult storeResult = new StoreResult();

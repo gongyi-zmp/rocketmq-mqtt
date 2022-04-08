@@ -19,7 +19,6 @@ package org.apache.rocketmq.mqtt.common.model;
 
 import org.apache.rocketmq.mqtt.common.util.TopicUtils;
 
-
 public class Subscription {
     private String topicFilter;
     private int qos;
@@ -73,11 +72,13 @@ public class Subscription {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) { return true; }
-        if (o == null || getClass() != o.getClass()) { return false; }
-
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Subscription that = (Subscription)o;
-
         return topicFilter != null ? topicFilter.equals(that.topicFilter) : that.topicFilter == null;
     }
 

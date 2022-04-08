@@ -52,7 +52,6 @@ public class PublishProcessor implements UpstreamProcessor {
     @Resource
     private FirstTopicManager firstTopicManager;
 
-
     @Override
     public CompletableFuture<HookResult> process(MqttMessageUpContext context, MqttMessage mqttMessage) {
         MqttPublishMessage mqttPublishMessage = (MqttPublishMessage) mqttMessage;
@@ -62,7 +61,7 @@ public class PublishProcessor implements UpstreamProcessor {
         String pubTopic = TopicUtils.normalizeTopic(originTopic);
         MqttTopic mqttTopic = TopicUtils.decode(pubTopic);
         firstTopicManager.checkFirstTopicIfCreated(mqttTopic.getFirstTopic());
-        Set<String> queueNames = wildcardManager.matchQueueSetByMsgTopic(pubTopic, context.getNamespace());
+        Set<String> queueNames = wildcardManager.matchQueueSetByMsgTopic(pubTopic, mqttTopic, context.getNamespace());
         Message message = MessageUtil.toMessage(mqttPublishMessage);
         message.setMsgId(msgId);
         message.setBornTimestamp(System.currentTimeMillis());

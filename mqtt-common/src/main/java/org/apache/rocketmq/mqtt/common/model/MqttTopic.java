@@ -17,7 +17,6 @@
 
 package org.apache.rocketmq.mqtt.common.model;
 
-
 public class MqttTopic {
     private String firstTopic;
     private String secondTopic;

@@ -35,19 +35,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-
 public class MessageUtil {
     public static final ByteBufAllocator ALLOCATOR = new UnpooledByteBufAllocator(false);
 
     public static MqttPublishMessage toMqttMessage(String topicName, byte[] body, int qos, int mqttId) {
         ByteBuf payload = ALLOCATOR.buffer();
         payload.writeBytes(body);
-        MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.PUBLISH, false,
-            MqttQoS.valueOf(qos),
-            false, 0);
+        MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(
+            MqttMessageType.PUBLISH, false, MqttQoS.valueOf(qos), false, 0);
         MqttPublishVariableHeader mqttPublishVariableHeader = new MqttPublishVariableHeader(topicName, mqttId);
-        MqttPublishMessage mqttPublishMessage = new MqttPublishMessage(mqttFixedHeader, mqttPublishVariableHeader,
-            payload);
+        MqttPublishMessage mqttPublishMessage = new MqttPublishMessage(mqttFixedHeader, mqttPublishVariableHeader, payload);
         return mqttPublishMessage;
     }
 
@@ -62,7 +59,6 @@ public class MessageUtil {
         message.setPayload(body);
         return message;
     }
-
 
     public static byte[] encode(List<Message> messageList) {
         if (messageList == null || messageList.isEmpty()) {

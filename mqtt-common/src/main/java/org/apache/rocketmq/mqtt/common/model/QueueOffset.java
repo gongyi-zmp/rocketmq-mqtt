@@ -56,8 +56,12 @@ public class QueueOffset {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         QueueOffset that = (QueueOffset) o;
         return offset == that.offset && initializingStatus == that.initializingStatus;
     }

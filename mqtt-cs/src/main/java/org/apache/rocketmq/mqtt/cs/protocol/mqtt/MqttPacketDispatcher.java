@@ -52,7 +52,6 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import java.util.concurrent.CompletableFuture;
 
-
 @ChannelHandler.Sharable
 @Component
 public class MqttPacketDispatcher extends SimpleChannelInboundHandler<MqttMessage> {
